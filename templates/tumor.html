@@ -1,0 +1,54 @@
+<style>
+  .tumor-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .tumor-card {
+    flex: 1 1 calc(50% - 10px);
+    background-color: #f5f5f5;
+    padding: 25px;
+    border-radius: 8px;
+    min-width: 250px;
+  }
+  .tumor-card h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 15px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  .tumor-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+    font-family: Arial, sans-serif;
+  }
+  @media (max-width: 768px) {
+    .tumor-card {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<div class="tumor-info">
+  <div class="tumor-card">
+    <h2>Benign Tumors</h2>
+    <p>
+      Benign tumors are non-cancerous growths that typically do not spread to other parts of the body. 
+      While they are usually not dangerous, they may cause discomfort or pressure on surrounding tissues. 
+      Treatment may involve monitoring or surgical removal if necessary for symptom relief.
+    </p>
+  </div>
+  <div class="tumor-card">
+    <h2>Malignant Tumors</h2>
+    <p>
+      Malignant tumors are cancerous and can spread to other areas of the body, damaging healthy tissue. 
+      They require prompt diagnosis and treatment, often involving surgery, chemotherapy, or radiation therapy. 
+      A biopsy is performed to assess the tumor's behavior and plan the appropriate course of action.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Breast Cancer Prediction</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ff69b4;
+      --secondary-color: #f0f0f0;
+      --text-color: #333;
+      --background-color: #fff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--background-color);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      text-align: center;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .tabs {
+      background-color: var(--secondary-color);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .tab-nav {
+      display: flex;
+      background-color: var(--primary-color);
+    }
+
+    .tab-nav button {
+      background-color: transparent;
+      border: none;
+      color: white;
+      padding: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .tab-nav button:hover,
+    .tab-nav button.active {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .tab-content {
+      padding: 2rem;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    form {
+      background-color: var(--secondary-color);
+      padding: 2rem;
+      border-radius: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff4b9d;
+    }
+
+    #button {
+      display: inline-block;
+      background-color: var(--primary-color);
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      border-radius: 4px;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      transition: background-color .3s, opacity .5s, visibility .5s;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    #button::after {
+      content: "\f077";
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      font-style: normal;
+      font-size: 1.5em;
+      line-height: 50px;
+      color: #fff;
+    }
+
+    #button:hover {
+      cursor: pointer;
+      background-color: #ff4b9d;
+    }
+
+    #button:active {
+      background-color: #ff4b9d;
+    }
+
+    #button.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      background-color: var(--secondary-color);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Breast Cancer Prediction</h1>
+    <p>Empowering lives through early detection</p>
+  </header>
+
+  <div class="container">
+    <div class="tabs">
+      <div class="tab-nav">
+        <button class="active" data-tab="what">About Breast Cancer</button>
+        <button data-tab="who">Risk Factors</button>
+        <button data-tab="symptoms">Key Symptoms</button>
+      </div>
+      <div class="tab-content">
+        <div id="what" class="tab-pane active">
+          <h3>About Breast Cancer</h3>
+          <p>Breast cancer is a disease in which cells in the breast grow uncontrollably. It is one of the most common cancers worldwide, affecting both women and men, though predominantly women. Early detection and treatment significantly improve survival rates.</p>
+        </div>
+        <div id="who" class="tab-pane">
+          <h3>Risk Factors</h3>
+          <p>While breast cancer can affect anyone, certain factors increase the risk, including:</p>
+          <ul>
+            <li>Being female and over 50 years of age</li>
+            <li>A family history of breast or ovarian cancer</li>
+            <li>Genetic mutations like BRCA1 or BRCA2</li>
+            <li>Prolonged exposure to estrogen through early menstruation or late menopause</li>
+            <li>Lifestyle factors such as alcohol consumption and obesity</li>
+          </ul>
+        </div>
+        <div id="symptoms" class="tab-pane">
+          <h3>Key Symptoms</h3>
+          <p>Early symptoms of breast cancer may include:</p>
+          <ul>
+            <li>An unusual lump in the breast or underarm</li>
+            <li>Changes in breast size, shape, or texture</li>
+            <li>Persistent pain in the breast or nipple area</li>
+            <li>Nipple discharge that is not breast milk</li>
+            <li>Skin changes, such as dimpling or redness</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 50px;">
+      <button type="button" id="showCellDataFormBtn" style="margin-right: 20px;">Cell Data</button>
+      <button type="button" id="showUploadReportBtn">Upload Report</button>
+  </div>
+  
+<!-- Upload Report Form -->
+<form id="uploadReportForm" action="/upload" method="post" enctype="multipart/form-data" onsubmit="return validateFile()" style="max-width: 100%; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+  <label for="report" style="font-size: 18px; font-weight: bold;">Upload Report (PDF only):</label>
+  <div style="margin: 20px auto; padding: 20px; border: 2px dashed #ff4b9d; border-radius: 8px; width: 50%; text-align: center; background-color: #f9f9f9; position: relative;">
+      <input 
+          type="file" 
+          id="report" 
+          name="report" 
+          accept="application/pdf" 
+          required 
+          style="opacity: 0; width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: pointer;"
+          onchange="document.getElementById('fileName').textContent = this.files[0]?.name || 'No file selected';"
+      >
+      <label for="report" style="cursor: pointer; color: #ff4b9d; font-weight: bold; z-index: 1;">Click here to select a file</label>
+      <div id="fileName" style="margin-top: 10px; color: #555;">No file selected</div>
+  </div>
+  <button 
+      type="submit"
+      style="background-color: #ff4b9d; color: white; border: none; border-radius: 4px; padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 10px; width: 150px; text-align: center; display: block; margin-left: auto; margin-right: auto;"
+  >
+      Submit
+  </button>
+</form>
+
+<script>
+  function toggleForm(formId) {
+      const uploadReportForm = document.getElementById('uploadReportForm');
+      const cellDataForm = document.getElementById('cellDataForm');
+      
+      // Hide both forms initially
+      uploadReportForm.style.display = 'none';
+      cellDataForm.style.display = 'none';
+
+      // Show the selected form
+      document.getElementById(formId).style.display = 'block';
+  }
+</script>
+
+  
+  <script>
+    function validateFile() {
+        const fileInput = document.getElementById('report');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('Please select a file before submitting.');
+            return false;
+        }
+        return true;
+    }
+  </script>
+  
+
+  
+  <script>
+      // Show the Cell Data Form
+      document.getElementById("showCellDataFormBtn").addEventListener("click", function () {
+          document.getElementById("cellDataForm").style.display = "block";
+          document.getElementById("uploadReportForm").style.display = "none";
+      });
+  
+      // Show the Upload Report Form
+      document.getElementById("showUploadReportBtn").addEventListener("click", function () {
+          document.getElementById("uploadReportForm").style.display = "block";
+          document.getElementById("cellDataForm").style.display = "none";
+      });
+  </script>
+    
+    <form  id="cellDataForm" action="/predict_res" method="post" style="display: none;">
+      <div class="form-group">
+        <label for="value1">Radius Mean</label>
+        <input type="text" id="value1" name="value1" required>
+      </div>
+      <div class="form-group">
+        <label for="value2">Texture Mean</label>
+        <input type="text" id="value2" name="value2" required>
+      </div>
+      <div class="form-group">
+        <label for="value3">Perimeter Mean</label>
+        <input type="text" id="value3" name="value3" required>
+      </div>
+      <div class="form-group">
+        <label for="value4">Area Mean</label>
+        <input type="text" id="value4" name="value4" required>
+      </div>
+      <div class="form-group">
+        <label for="value5">Smoothness Mean</label>
+        <input type="text" id="value5" name="value5" required>
+      </div>
+      <div class="form-group">
+        <label for="value6">Compactness Mean</label>
+        <input type="text" id="value6" name="value6" required>
+      </div>
+      <div class="form-group">
+        <label for="value7">Concavity Mean</label>
+        <input type="text" id="value7" name="value7" required>
+      </div>
+      <div class="form-group">
+        <label for="value8">Concave Points Mean</label>
+        <input type="text" id="value8" name="value8" required>
+      </div>
+      <div class="form-group">
+        <label for="value9">Symmetry Mean</label>
+        <input type="text" id="value9" name="value9" required>
+      </div>
+      <div class="form-group">
+        <label for="value10">Fractal Dimension Mean</label>
+        <input type="text" id="value10" name="value10" required>
+      </div>
+      <div class="form-group">
+        <label for="value11">Radius SE</label>
+        <input type="text" id="value11" name="value11" required>
+      </div>
+      <div class="form-group">
+        <label for="value12">Texture SE</label>
+        <input type="text" id="value12" name="value12" required>
+      </div>
+      <div class="form-group">
+        <label for="value13">Perimeter SE</label>
+        <input type="text" id="value13" name="value13" required>
+      </div>
+      <div class="form-group">
+        <label for="value14">Area SE</label>
+        <input type="text" id="value14" name="value14" required>
+      </div>
+      <div class="form-group">
+        <label for="value15">Smoothness SE</label>
+        <input type="text" id="value15" name="value15" required>
+      </div>
+      <div class="form-group">
+        <label for="value16">Compactness SE</label>
+        <input type="text" id="value16" name="value16" required>
+      </div>
+      <div class="form-group">
+        <label for="value17">Concavity SE</label>
+        <input type="text" id="value17" name="value17" required>
+      </div>
+      <div class="form-group">
+        <label for="value18">Concave Points SE</label>
+        <input type="text" id="value18" name="value18" required>
+      </div>
+      <div class="form-group">
+        <label for="value19">Symmetry SE</label>
+        <input type="text" id="value19" name="value19" required>
+      </div>
+      <div class="form-group">
+        <label for="value20">Fractal Dimension SE</label>
+        <input type="text" id="value20" name="value20" required>
+      </div>
+      <div class="form-group">
+        <label for="value21">Radius Worst</label>
+        <input type="text" id="value21" name="value21" required>
+      </div>
+      <div class="form-group">
+        <label for="value22">Texture Worst</label>
+        <input type="text" id="value22" name="value22" required>
+      </div>
+      <div class="form-group">
+        <label for="value23">Perimeter Worst</label>
+        <input type="text" id="value23" name="value23" required>
+      </div>
+      <div class="form-group">
+        <label for="value24">Area Worst</label>
+        <input type="text" id="value24" name="value24" required>
+      </div>
+      <div class="form-group">
+        <label for="value25">Smoothness Worst</label>
+        <input type="text" id="value25" name="value25" required>
+      </div>
+      <div class="form-group">
+        <label for="value26">Compactness Worst</label>
+        <input type="text" id="value26" name="value26" required>
+      </div>
+      <div class="form-group">
+        <label for="value27">Concavity Worst</label>
+        <input type="text" id="value27" name="value27" required>
+      </div>
+      <div class="form-group">
+        <label for="value28">Concave Points Worst</label>
+        <input type="text" id="value28" name="value28" required>
+      </div>
+      <div class="form-group">
+        <label for="value29">Symmetry Worst</label>
+        <input type="text" id="value29" name="value29" required>
+      </div>
+      <div class="form-group">
+        <label for="value30">Fractal Dimension Worst</label>
+        <input type="text" id="value30" name="value30" required>
+      </div>
+      <button type="submit">Submit Request</button>
+    </form>
+  </div>
+
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('.tab-nav button').click(function() {
+        var tab_id = $(this).attr('data-tab');
+
+        $('.tab-nav button').removeClass('active');
+        $('.tab-pane').removeClass('active');
+
+        $(this).addClass('active');
+        $("#"+tab_id).addClass('active');
+      });
+
+      var btn = $('#button');
+
+      $(window).scroll(function() {
+        if ($(window).scrollTop() > 300) {
+          btn.addClass('show');
+        } else {
+          btn.removeClass('show');
+        }
+      });
+
+      btn.on('click', function(e) {
+        e.preventDefault();
+        $('html, body').animate({scrollTop:0}, '300');
+      });
+    });
+  </script>
+</body>
+</html>
+
