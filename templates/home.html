@@ -250,11 +250,9 @@
       const uploadReportForm = document.getElementById('uploadReportForm');
       const cellDataForm = document.getElementById('cellDataForm');
       
-      // Hide both forms initially
       uploadReportForm.style.display = 'none';
       cellDataForm.style.display = 'none';
 
-      // Show the selected form
       document.getElementById(formId).style.display = 'block';
   }
 </script>
@@ -274,13 +272,11 @@
 
   
   <script>
-      // Show the Cell Data Form
       document.getElementById("showCellDataFormBtn").addEventListener("click", function () {
           document.getElementById("cellDataForm").style.display = "block";
           document.getElementById("uploadReportForm").style.display = "none";
       });
   
-      // Show the Upload Report Form
       document.getElementById("showUploadReportBtn").addEventListener("click", function () {
           document.getElementById("uploadReportForm").style.display = "block";
           document.getElementById("cellDataForm").style.display = "none";

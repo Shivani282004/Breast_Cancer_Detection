@@ -10,10 +10,10 @@ import time
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-# Load the cancer prediction model
-cancer_model = joblib.load("cancer_model.joblib")  # Replace with your model filename
 
-# List of feature variables for prediction
+cancer_model = joblib.load("cancer_model.joblib")  
+
+
 feature_columns = [
     "id",
     "radius_mean", "texture_mean", "perimeter_mean", "area_mean", "smoothness_mean",
@@ -25,7 +25,7 @@ feature_columns = [
     "symmetry_worst", "fractal_dimension_worst"
 ]
 
-# Function to extract text from a PDF
+
 def extract_text(file_content):
     text = ""
     with pdfplumber.open(BytesIO(file_content)) as pdf:
@@ -39,28 +39,28 @@ def extract_text(file_content):
                 text += ocr_text + "\n"
     return text
 
-# Function to extract features from text
+
 def extract_features(text):
-    extracted_features = {"id": 0}  # ID placeholder
+    extracted_features = {"id": 0}  
     for feature in feature_columns[1:]:
         match = re.search(fr"-?\s*{feature}\s*[:=]?\s*([\d.]+)", text, re.IGNORECASE)
         if match:
             extracted_features[feature] = float(match.group(1))
         else:
-            extracted_features[feature] = None  # Missing feature
+            extracted_features[feature] = None 
             app.logger.debug(f"Missing feature: {feature}")
     if len(extracted_features) != len(feature_columns):
         raise ValueError("Extracted features count does not match expected features count.")
     return extracted_features
 
-# Function to predict cancer based on features
+
 def predict_cancer(features):
     feature_values = [features["id"]] + [features[col] for col in feature_columns[1:]]
     feature_values = np.array(feature_values).reshape(1, -1)
     prediction = cancer_model.predict(feature_values)
     return "Malignant" if prediction[0] == 1 else "Benign"
 
-# Route for form-based prediction
+
 @app.route('/predict_res', methods=['POST'])
 def predict_res():
     try:
@@ -71,11 +71,11 @@ def predict_res():
         prediction = cancer_model.predict(data_np)
         prediction_time = round(time.time() - start_time, 9)
 
-        # Get prediction probabilities safely
+        
         probabilities = getattr(cancer_model, "predict_proba", lambda x: None)(data_np)
         accuracy = max(probabilities[0]) if probabilities is not None and len(probabilities[0]) > 0 else 1.0
 
-        # Interpret the prediction result
+        
         output = "Malignant" if prediction[0] == 1 else "Benign"
         return render_template('result.html', output=output, accuracy=accuracy, time=prediction_time)
     except Exception as e:
@@ -83,7 +83,7 @@ def predict_res():
         return f"An error occurred: {str(e)}", 500
 
 
-# Route for file upload and prediction
+
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
@@ -97,7 +97,7 @@ def upload():
         if all(feature_data[col] is not None for col in feature_columns):
             start_time = time.time()
 
-            # Predict cancer and get the probability
+           
             cancer_status = predict_cancer(feature_data)
             feature_values = [feature_data[col] for col in feature_columns]
             feature_array = np.array(feature_values).reshape(1, -1)
@@ -106,7 +106,7 @@ def upload():
                 probabilities = cancer_model.predict_proba(feature_array)[0]
                 accuracy = max(probabilities)
             except AttributeError:
-                accuracy = 1.0  # Default confidence
+                accuracy = 1.0  
 
             prediction_time = round(time.time() - start_time, 9)
 
@@ -128,7 +128,7 @@ def upload():
         return str(e), 500
 
 
-# Home route
+
 @app.route('/')
 def index():
     return render_template('home.html')
