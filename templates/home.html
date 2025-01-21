@@ -218,11 +218,12 @@
 
     <div style="margin-bottom: 50px;">
       <button type="button" id="showCellDataFormBtn" style="margin-right: 20px;">Cell Data</button>
-      <button type="button" id="showUploadReportBtn">Upload Report</button>
-  </div>
-  
-<!-- Upload Report Form -->
-<form id="uploadReportForm" action="/upload" method="post" enctype="multipart/form-data" onsubmit="return validateFile()" style="max-width: 100%; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+      <button type="button" id="showUploadReportBtn" style="margin-right: 20px;">Upload Report</button>
+      <button type="button" id="showUploadImageBtn">Upload Image</button>
+    </div>
+    
+   <!-- Upload Report Form -->
+<form id="uploadReportForm" action="/upload" method="post" enctype="multipart/form-data" onsubmit="return validatePDF()" style="max-width: 100%; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
   <label for="report" style="font-size: 18px; font-weight: bold;">Upload Report (PDF only):</label>
   <div style="margin: 20px auto; padding: 20px; border: 2px dashed #ff4b9d; border-radius: 8px; width: 50%; text-align: center; background-color: #f9f9f9; position: relative;">
       <input 
@@ -244,44 +245,100 @@
       Submit
   </button>
 </form>
+    
+    <!-- Upload Image Form -->
+    <form id="uploadImageForm" action="/upload-image" method="post" enctype="multipart/form-data" onsubmit="return validateImage()" style="max-width: 100%; overflow: hidden; display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+      <label for="image" style="font-size: 18px; font-weight: bold;">Upload Image (JPG, PNG only):</label>
+      <div style="margin: 20px auto; padding: 20px; border: 2px dashed #ff4b9d; border-radius: 8px; width: 50%; text-align: center; background-color: #f9f9f9; position: relative;">
+        <input 
+    type="file" 
+    id="image" 
+    name="image" 
+    accept="image/jpeg, image/png" 
+    required 
+    style="opacity: 0; width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: pointer;"
+    onchange="document.getElementById('imageFileName').textContent = this.files[0]?.name || 'No file selected';"
+>
 
-<script>
-  function toggleForm(formId) {
-      const uploadReportForm = document.getElementById('uploadReportForm');
-      const cellDataForm = document.getElementById('cellDataForm');
-      
-      uploadReportForm.style.display = 'none';
-      cellDataForm.style.display = 'none';
-
-      document.getElementById(formId).style.display = 'block';
-  }
-</script>
-
+        <label for="image" style="cursor: pointer; color: #ff4b9d; font-weight: bold; z-index: 1;">Click here to select a file</label>
+        <div id="imageFileName" style="margin-top: 10px; color: #555;">No file selected</div>
+      </div>
+      <button 
+        type="submit"
+        style="background-color: #ff4b9d; color: white; border: none; border-radius: 4px; padding: 10px 20px; font-size: 16px; cursor: pointer; margin-top: 10px; width: 150px; text-align: center; display: block; margin-left: auto; margin-right: auto;"
+      >
+        Submit
+      </button>
+    </form>
+    
+    <script>
+      function toggleForm(formId) {
+          const uploadReportForm = document.getElementById('uploadReportForm');
+          const uploadImageForm = document.getElementById('uploadImageForm');
+          const cellDataForm = document.getElementById('cellDataForm');
+          
+          uploadReportForm.style.display = 'none';
+          uploadImageForm.style.display = 'none';
+          cellDataForm.style.display = 'none';
+    
+          document.getElementById(formId).style.display = 'block';
+      }
+    </script>
   
-  <script>
-    function validateFile() {
-        const fileInput = document.getElementById('report');
-        if (!fileInput.files || fileInput.files.length === 0) {
-            alert('Please select a file before submitting.');
-            return false;
-        }
-        return true;
-    }
-  </script>
-  
-
-  
-  <script>
+    
+    <script>
       document.getElementById("showCellDataFormBtn").addEventListener("click", function () {
           document.getElementById("cellDataForm").style.display = "block";
           document.getElementById("uploadReportForm").style.display = "none";
+          document.getElementById("uploadImageForm").style.display = "none";
       });
-  
+    
       document.getElementById("showUploadReportBtn").addEventListener("click", function () {
           document.getElementById("uploadReportForm").style.display = "block";
           document.getElementById("cellDataForm").style.display = "none";
+          document.getElementById("uploadImageForm").style.display = "none";
       });
-  </script>
+    
+      document.getElementById("showUploadImageBtn").addEventListener("click", function () {
+          document.getElementById("uploadImageForm").style.display = "block";
+          document.getElementById("cellDataForm").style.display = "none";
+          document.getElementById("uploadReportForm").style.display = "none";
+      });
+    </script>
+
+<script>
+  function validatePDF() {
+    const fileInput = document.getElementById('report');
+    console.log(fileInput.files.length); // Log the number of selected files
+    if (!fileInput.files || fileInput.files.length === 0) {
+      alert('Please select a PDF file before submitting.');
+      return false;
+    }
+    const fileName = fileInput.files[0].name;
+    const fileExtension = fileName.split('.').pop().toLowerCase();
+    if (fileExtension !== 'pdf') {
+      alert('Please select a PDF file.');
+      return false;
+    }
+    return true;
+  }
+
+  function validateImage() {
+    const fileInput = document.getElementById('image');
+    console.log(fileInput.files.length); // Log the number of selected files
+    if (!fileInput.files || fileInput.files.length === 0) {
+      alert('Please select an image file before submitting.');
+      return false;
+    }
+    const fileName = fileInput.files[0].name;
+    const fileExtension = fileName.split('.').pop().toLowerCase();
+    if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png') {
+      alert('Please select a JPG or PNG image file.');
+      return false;
+    }
+    return true;
+  }
+</script>
     
     <form  id="cellDataForm" action="/predict_res" method="post" style="display: none;">
       <div class="form-group">
@@ -441,4 +498,3 @@
   </script>
 </body>
 </html>
-

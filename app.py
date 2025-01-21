@@ -1,15 +1,41 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect,url_for,send_from_directory
 import joblib
 import numpy as np
-import re
 from io import BytesIO
 import pdfplumber
 import pytesseract
 import time
+from werkzeug.utils import secure_filename
+import os
+import cv2
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import img_to_array
+import re
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+# Load the trained model
+model = load_model("BREAST_cancer_PREDICTION_model.h5")
+
+# Define image size for the model
+image_size = (128, 128)
+
+# Define classes
+classes = ["benign", "malignant", "normal"]
+# Define the upload folder and allowed file extensions
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+# Check if the 'uploads' folder exists, if not, create it
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Function to check if the file extension is allowed
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 cancer_model = joblib.load("cancer_model.joblib")  
 
@@ -83,7 +109,6 @@ def predict_res():
         return f"An error occurred: {str(e)}", 500
 
 
-
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
@@ -129,6 +154,54 @@ def upload():
 
 
 
+
+@app.route('/upload-image', methods=['POST'])
+def upload_image():
+    if 'image' not in request.files:
+        return 'No file part', 400
+    
+    file = request.files['image']
+    
+    if file.filename == '':
+        return 'No selected file', 400
+    
+    # Process the image
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join('uploads', filename)
+        file.save(filepath)
+        
+        # Start timer to measure prediction time
+        start_time = time.time()
+        
+        # Load and preprocess the image
+        img = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+        img_resized = cv2.resize(img, image_size)
+        img_array = img_to_array(img_resized)
+        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+        img_array = img_array / 255.0  # Normalize pixel values
+        
+        # Predict the class
+        prediction = model.predict(img_array)
+        predicted_class = classes[np.argmax(prediction)]
+        accuracy = np.max(prediction)  # Get the highest probability for accuracy
+        
+        # Calculate the time taken for prediction
+        end_time = time.time()
+        time_taken = end_time - start_time
+        
+        return render_template('result2.html', prediction=predicted_class, accuracy=accuracy, time=time_taken)
+    
+    return 'Invalid file format', 400
+
+# Check allowed file extension
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    
 @app.route('/')
 def index():
     return render_template('home.html')
